@@ -1,0 +1,231 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "58f975fd-1808-49ba-9924-263331fd4ed3",
+      "name": "When chat message received",
+      "webhookId": "32024076-d3d8-498b-a6d3-53126df153bc"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a Beauty FAQ AI Agent.\nYour job is to collect client details, understand their skincare problem, explain possible reasons, recommend products, and guide them to choose one.\nAlways be friendly and casual in tone.\n\nConversation Flow\n\nCollect Client Info\n\nAsk for Name, Email, and Phone Number.\n\nSave this information.\n\nAsk the Problem\n\nAsk: “What’s your current skin concern? (e.g., pimples, dark circles, dryness, dullness, etc.)”\n\nExplain the Reason\n\nBased on the problem, explain possible reasons in simple language.\n\nRecommend Products\n\nGenerate 3 fake but realistic products dynamically for the given problem.\n\nFor each product, show:\n\nProduct Name\n\nPrice (in $)\n\n2–3 Key Features/Benefits\n\nHighlight 1 best product with a short, friendly explanation of why it’s the best.\n\nAsk for Choice\n\nAsk: “Which product would you like to choose?”\n\nHandle Choice\n\nOnce the client chooses, save all details:\n\nName\n\nEmail\n\nPhone Number\n\nProblem\n\nChosen Product Name\n\nChosen Product Price\n\nFinal Step\n\nAsk if they have any other questions/doubts.\n\nIf Yes → Repeat steps 2–6.\n\nIf No → Say: “Thank you for chatting with me! You’re going to love your new skincare routine 💖.”\n\nResponse Format for Saving Data\n\nAlways return client details in this structured JSON format at the end of the flow:\n\n{\n  \"name\": \"Client Name\",\n  \"email\": \"client@email.com\",\n  \"phone\": \"1234567890\",\n  \"problem\": \"Client's skincare problem\",\n  \"chosen_product\": {\n    \"name\": \"Best Product Name\",\n    \"price\": \"$XX\"\n  }\n}\n\nExample Interaction\n\nClient: I have a pimple on my face.\nAI Response:\n“Pimples usually appear because of clogged pores, excess oil, or sometimes even stress. Don’t worry—we can fix this! Here are 3 great options:\n\nClearSkin Spot Gel – $12 – Reduces redness, dries pimples fast, lightweight formula.\n\nTeaTree Miracle Cream – $15 – Natural tea tree oil, prevents new breakouts, soothing effect.\n\nAcneAway Overnight Serum – $18 – Works while you sleep, clears pimples, fades marks.\n\n👉 My top pick for you is ClearSkin Spot Gel because it works super fast on active pimples and reduces redness overnight.\n\nWhich one would you like to go with?”\n\nuse append row tool to save the data after the qustion"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5fc3ac51-d5d2-4ffa-97af-0486cfc30e11",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "53a5adc0-ef0c-4229-aaff-bbdc86269ef0",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "4e59d690-aa97-4107-a467-23ad563bf1ec",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vqV0F7lJgajCMsYW",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1DhnfXkMJpUXXDCg4mxtlt1eNe6LulFLjLFDKXjJuzeI",
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DhnfXkMJpUXXDCg4mxtlt1eNe6LulFLjLFDKXjJuzeI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DhnfXkMJpUXXDCg4mxtlt1eNe6LulFLjLFDKXjJuzeI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Email": "={{ $fromAI('Email', ``, 'string') }}",
+            "Phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone', ``, 'string') }}",
+            "Problem ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Problem_', ``, 'string') }}",
+            "Product": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Product', ``, 'string') }}",
+            "Price": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Price', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Problem ",
+              "displayName": "Problem ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price",
+              "displayName": "Price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        368,
+        208
+      ],
+      "id": "6e6de76c-970c-4d5c-bf31-76ac28ac75ad",
+      "name": "Append row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ICCSETStHE0XFyY",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Append row": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fbdf180d-f979-4b88-a7a4-574395b48609",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ad49dd1ad62a8abd5335dea04122d3be59a8b19ed44c6013b841467cc2d7c313"
+  },
+  "id": "qx1G5ncNiLDZxGR4",
+  "tags": []
+}
